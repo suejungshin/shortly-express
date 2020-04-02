@@ -1,2 +1,8 @@
 # shortly-express
-This is a project I completed as a student at [hackreactor](http://hackreactor.com). This project was worked on with a pair.
+
+URL shortener with simple session-based server-side authentication system<br>
+
+To run: <br>
+`npm install` <br>
+`npm start` <br>
+`npm test` <br>
