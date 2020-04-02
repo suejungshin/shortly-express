@@ -82,6 +82,14 @@ app.post('/links', Auth.verifySession,
 app.get('/logout',
   (req, res, next) => {
 
+    return models.Sessions.delete({ hash: req.cookies.shortlyid })
+      .then(() => {
+        res.clearCookie('shortlyid');
+        res.redirect('/login');
+      })
+      .error(error => {
+        res.status(500).send(error);
+      });
   });
 
 app.get('/login', (req, res) => {
@@ -92,12 +100,12 @@ app.post('/login',
   (req, res, next) => {
     let username = req.body.username;
     let password = req.body.password;
-    models.Users.get({username})
+    models.Users.get({ username })
       .then(user => {
         if (!user || !models.User.compare(password, user.password, user.salt)) {
 
         }
-        return models.Sessions.update({id: req.session.id}, {userId: user.id});
+        return models.Sessions.update({ id: req.session.id }, { userId: user.id });
       })
       .then(() => {
         res.redirect('/');
@@ -116,15 +124,15 @@ app.post('/signup',
     let username = req.body.username;
     let password = req.body.password;
 
-    models.Users.get({username})
+    models.Users.get({ username })
       .then(user => {
         if (user) {
           throw user;
         }
-        return models.Users.create({username, password});
+        return models.Users.create({ username, password });
       })
       .then(results => {
-        return models.Sessions.update({id: req.session.id}, {userId: results.insertId});
+        return models.Sessions.update({ id: req.session.id }, { userId: results.insertId });
       })
       .then(user => {
         res.redirect('/');
